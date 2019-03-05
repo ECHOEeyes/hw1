@@ -1,0 +1,99 @@
+1.无代码
+2. 《Grayscale_01.m》
+LENA=imread('lena.bmp');
+figure(1)
+imshow(LENA);
+title('lena-8bit');
+[x,y]=size(LENA);
+for i=2:8 
+    for j=1:x
+        for k=1:y
+            LENA(j,k)=floor(LENA(j,k)/2);
+        end
+    end
+    figure(i)
+     imshow(LENA,[1,2.^(9-i)]);
+     title(['lena-' num2str(9-i) 'bit']);
+end
+3. 《MeanVariance_02.m》
+LENA=imread('lena.bmp');
+mean=mean2(LENA)  
+d2=std2(LENA)  
+4. 《Interpolation_03.m》
+LENA=imread('lena.bmp');
+figure(1)
+imshow(LENA);
+title('lena-原图');
+%最近邻插值
+New1=zeros(2048,2048);
+for i=1:2048
+    for j=1:2048
+            x=round(i/4);y=round(j/4);
+            if x==0
+                x=1;
+            end
+            if y==0
+                y=1;
+            end
+            New1(i,j)=LENA(x,y);
+    end
+end
+figure(2)
+New1=uint8(New1);
+imshow(New1);
+title('lena-最近邻插值');
+%双线性插值
+New2=imresize(LENA,4,'bilinear');
+figure(3)
+imshow(New2);
+title('lena-双线性插值');
+%双三次插值
+New3=imresize(LENA,4,'bicubic');
+figure(4)
+imshow(New3);
+title('lena-双三次插值');
+5. 《ShearRotation_04.m》
+LENA=imread('lena.bmp');
+ELAIN1=imread('elain1.bmp');
+for i=1:2
+    if i==1
+        Image=LENA;
+        str='lena';
+    else
+        Image=ELAIN1;
+        str='elain1';
+    end
+    figure(i);
+    subplot(2,3,1);
+    imshow(Image);
+    title([str '原图']);
+    %水平偏移
+    shr=[1 0 0;1 1 0;0 0 1];
+    t=maketform('affine',shr);
+    NewShr=imtransform(Image,t);
+    subplot(2,3,2);
+    imshow(NewShr);
+    title([str '水平偏移']);
+    %旋转30度
+    rtt=[cosd(30) sind(30) 0;-sind(30) cosd(30) 0;0 0 1];
+    t=maketform('affine',rtt);
+    NewShrRtt=imtransform(NewShr,t);
+    subplot(2,3,3);
+    imshow(NewShrRtt);
+    title([str '水平偏移+旋转30度']);
+    %最近邻插值
+    New1=imresize(NewShrRtt,4,'nearest');
+    subplot(2,3,4);
+    imshow(New1);
+    title([str '最近邻插值']);
+    %双线性插值
+    New2=imresize(NewShrRtt,4,'bilinear');
+    subplot(2,3,5);
+    imshow(New2);
+    title([str '双线性插值']);
+    %双三次插值
+    New3=imresize(NewShrRtt,4,'bicubic');
+    subplot(2,3,6);
+    imshow(New3);
+    title([str '双三次插值']);
+end
